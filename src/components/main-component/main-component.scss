@@ -1,0 +1,14 @@
+@import '../../styles/variables';
+
+.main {
+  padding: 2rem;
+  background: $background;
+  min-height: 80vh;
+
+  .empty {
+    text-align: center;
+    color: $text-muted;
+    margin-top: 3rem;
+    font-size: 1.1rem;
+  }
+}
