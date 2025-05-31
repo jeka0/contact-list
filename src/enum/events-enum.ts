@@ -8,4 +8,5 @@ export class Events {
     static readonly FORM_SUBMITTED = 'form-submitted';
     static readonly CONTACT_EDITED = 'contact-edited';
     static readonly CONTACT_ADDED = 'contact-added';
+    static readonly TOASY_HIDDEN = 'toast-hidden';
 };

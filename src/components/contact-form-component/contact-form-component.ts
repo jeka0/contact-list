@@ -2,6 +2,7 @@ import html from './contact-form-component.html?raw';
 import cssUrl from './contact-form-component.scss?url';
 import { ContactService } from '../../services/contact-service';
 import { GroupService } from '../../services/group-service';
+import { ToastService } from '../../services/toast-service';
 import { Injector } from '../../services/injector';
 import type { Contact } from '../../models/Contact';
 import IMask from 'imask';
@@ -19,6 +20,7 @@ export class ContactFormComponent extends HTMLElement {
     private shadowRootRef: ShadowRoot;
     private contactService = Injector.get(ContactService);
     private groupService = Injector.get(GroupService);
+    private toastService = Injector.get(ToastService);
 
     private nameInput: HTMLInputElement | null = null;
     private phoneInput: HTMLInputElement | null = null;
@@ -133,7 +135,7 @@ export class ContactFormComponent extends HTMLElement {
         this.validateDropdown(this.groupDropdown, this.dropdownError);
     }
 
-    private validateDropdown(dropdown: CustomDropdownComponent | null, errorElement: HTMLDivElement | null) {
+    private validateDropdown(dropdown: CustomDropdownComponent | null, errorElement: HTMLDivElement | null, errorMessage?: string) {
         if(!dropdown || !errorElement) return false;
 
         if(dropdown.value){
@@ -143,16 +145,22 @@ export class ContactFormComponent extends HTMLElement {
         } else {
             dropdown.isValid = false;
             errorElement.classList.add('error');
+            if(errorMessage){
+                this.toastService.showErrorToast(errorMessage)
+            }
             return false;
         }
     }
 
-    private validateInput(inputElement: HTMLInputElement | null, errorElement: HTMLDivElement | null): boolean {
+    private validateInput(inputElement: HTMLInputElement | null, errorElement: HTMLDivElement | null, errorMessage?: string): boolean {
         if (!inputElement || !errorElement) return false;
 
         if (inputElement.value.trim() === '') {
             inputElement.classList.add('invalid');
             errorElement.classList.add('error');
+            if(errorMessage){
+                this.toastService.showErrorToast(errorMessage)
+            }
             return false;
         } else {
             inputElement.classList.remove('invalid');
@@ -163,9 +171,9 @@ export class ContactFormComponent extends HTMLElement {
 
     private validateForm(): boolean {
         let isValid = true;
-        isValid = this.validateInput(this.nameInput, this.nameError) && isValid;
-        isValid = this.validateInput(this.phoneInput, this.phoneError) && isValid;
-        isValid = this.validateDropdown(this.groupDropdown, this.dropdownError) && isValid;
+        isValid = this.validateInput(this.nameInput, this.nameError, "Название контакта не может быть пустым!") && isValid;
+        isValid = this.validateInput(this.phoneInput, this.phoneError, "Номер телефона не может быть пустым!") && isValid;
+        isValid = this.validateDropdown(this.groupDropdown, this.dropdownError, "Должна быть выбрана группа для контакта!") && isValid;
         return isValid;
     }
 
@@ -187,20 +195,15 @@ export class ContactFormComponent extends HTMLElement {
             success = this.contactService.addContact(name, phone, groupId);
             if (success) {
                 this.dispatchEvent(new CustomEvent(Events.CONTACT_ADDED, { bubbles: true, composed: true }));
-            } else {
-                alert('Контакт с таким номером телефона уже существует.');
             }
         } else if (this._mode === 'edit' && this._contact) {
             success = this.contactService.editContact(this._contact.id, name, phone, groupId);
             if (success) {
                 this.dispatchEvent(new CustomEvent(Events.CONTACT_EDITED, { bubbles: true, composed: true }));
-            } else {
-                alert('Контакт с таким номером телефона уже существует или данные не изменены.');
             }
         }
 
         if (success) {
-            this.clearForm();
             this.dispatchEvent(new CustomEvent(Events.FORM_SUBMITTED, { bubbles: true, composed: true, detail: { success: true, mode: this._mode } }));
         }
     }

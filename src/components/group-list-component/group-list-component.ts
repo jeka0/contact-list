@@ -2,6 +2,7 @@ import html from './group-list-component.html?raw';
 import cssUrl from './group-list-component.scss?url';
 import deleteIconSVG from '../../icons/delete-icon.svg';
 import { GroupService } from '../../services/group-service';
+import { ToastService } from '../../services/toast-service';
 import { Injector } from '../../services/injector';
 import type { Group } from '../../models/Group';
 import { Events } from '../../enum/events-enum';
@@ -16,6 +17,7 @@ template.innerHTML = `
 export class GroupListComponent extends HTMLElement {
     private shadowRootRef: ShadowRoot;
     private groupService = Injector.get(GroupService);
+    private toastService = Injector.get(ToastService);
     private groupListElement: HTMLUListElement | null = null;
     private addGroupButton: HTMLButtonElement | null = null;
     private saveGroupsButton: HTMLButtonElement | null = null;
@@ -68,6 +70,10 @@ export class GroupListComponent extends HTMLElement {
                 this.createGroupItem(group.id, this.createSavedInput(group), (e) => this.handleDeleteGroup(e, group))
             )
         );
+
+        this.newGroupInputs.forEach((newGroupInput, key) => {
+            this.addGroupItem(key, newGroupInput);
+        })
     }
 
     private createGroupItem(id: string, inputElement: HTMLInputElement, deleteHandler: (this: HTMLButtonElement, ev: MouseEvent) => any) : HTMLLIElement {
@@ -122,6 +128,10 @@ export class GroupListComponent extends HTMLElement {
         const id = Date.now().toString();
         const newInput = this.createAddedInput();
         this.newGroupInputs.set(id, newInput);
+        this.addGroupItem(id, newInput);
+    }
+
+    private addGroupItem(id: string, newInput: HTMLInputElement){
         this.groupListElement?.appendChild(
             this.createGroupItem(id, newInput, () => {
                 this.newGroupInputs.delete(id);
@@ -137,22 +147,24 @@ export class GroupListComponent extends HTMLElement {
     }
 
     private handleSaveGroups() {
-        this.newGroupInputs.forEach(newGroupInput => {
+        let isSuccess = false;
+        this.newGroupInputs.forEach((newGroupInput, key) => {
             if (newGroupInput) {
                 const groupName = newGroupInput.value.trim();
                 if (groupName) {
-                    if (this.groupService.addGroup(groupName)) {
-                        this.renderGroups();
+                    isSuccess = this.groupService.addGroup(groupName)
+                    if (isSuccess) {
+                        this.newGroupInputs.delete(key)
                         this.dispatchEvent(new CustomEvent(Events.GROUP_ADDED, { bubbles: true, composed: true, detail: { groupName } }));
-                    } else {
-                        alert('Группа с таким названием уже существует!');
                     }
                 } else {
-                    alert('Название группы не может быть пустым.');
+                    this.toastService.showErrorToast('Название группы не может быть пустым!')
                 }
             }
         })
-        this.newGroupInputs.clear();
+        if(isSuccess){
+            this.renderGroups();
+        }
     }
 
     private handleDeleteGroup(event: Event, group: Group) {
@@ -171,7 +183,7 @@ export class GroupListComponent extends HTMLElement {
                     this.renderGroups();
                     this.dispatchEvent(new CustomEvent(Events.GROUP_DELETED, { bubbles: true, composed: true, detail: { groupId } }));
                 } else {
-                    alert('Не удалось удалить группу.');
+                    this.toastService.showErrorToast('Не удалось удалить группу!')
                 }
             }
         })

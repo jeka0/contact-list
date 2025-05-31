@@ -1,11 +1,13 @@
 import type { Contact } from '../models/Contact';
 import { LocalStorageService } from './local-storage-service';
+import { ToastService } from './toast-service';
 import { Injector } from "./injector";
 
 export class ContactService {
     private CONTACTS_KEY = 'contacts';
     private contacts: Contact[] = [];
     private localStorageService = Injector.get(LocalStorageService);
+    private toastService = Injector.get(ToastService);
 
     loadContacts(): void {
         this.contacts = this.localStorageService.loadData<Contact>(this.CONTACTS_KEY);
@@ -22,6 +24,7 @@ export class ContactService {
     addContact(name: string, phone: string, groupId: string): boolean {
         const unmaskedPhone = phone.replace(/\D/g, '');
         if (this.contacts.some(contact => contact.phone.replace(/\D/g, '') === unmaskedPhone)) {
+            this.toastService.showErrorToast("Данный номер телефон уже используется! Контакт не будет сохранен!")
             return false;
         }
 
@@ -33,6 +36,7 @@ export class ContactService {
         };
         this.contacts.push(newContact);
         this.saveContacts();
+        this.toastService.showSuccessToast("Контакт успешно создан!")
         return true;
     }
 
@@ -45,11 +49,13 @@ export class ContactService {
 
         const unmaskedNewPhone = newPhone.replace(/\D/g, '');
         if (this.contacts.some(contact => contact.phone.replace(/\D/g, '') === unmaskedNewPhone && contact.id !== id)) {
+            this.toastService.showErrorToast("Данный номер телефон уже используется! Контакт не будет изменен!")
             return false;
         }
 
         this.contacts[index] = { ...this.contacts[index], name: newName, phone: newPhone, groupId: newGroupId };
         this.saveContacts();
+        this.toastService.showSuccessToast("Контакт успешно изменен!")
         return true;
     }
 
@@ -58,6 +64,7 @@ export class ContactService {
         this.contacts = this.contacts.filter(contact => contact.id !== id);
         if (this.contacts.length < initialLength) {
             this.saveContacts();
+            this.toastService.showSuccessToast("Контакт успешно удален!")
             return true;
         }
         return false;
@@ -69,6 +76,7 @@ export class ContactService {
         this.contacts = this.contacts.filter(contact => contact.groupId !== groupId);
         if (this.contacts.length < initialLength) {
             this.saveContacts();
+            this.toastService.showSuccessToast("Связанные с группой контакты успешно удалены!")
         }
     }
 }
