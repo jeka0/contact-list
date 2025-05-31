@@ -1,5 +1,5 @@
 export class LocalStorageService {
-    static loadData<T>(key: string): T[] {
+    loadData<T>(key: string): T[] {
         try {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : [];
@@ -9,7 +9,7 @@ export class LocalStorageService {
         }
     }
 
-    static saveData<T>(key: string, data: T[]): void {
+    saveData<T>(key: string, data: T[]): void {
         try {
             localStorage.setItem(key, JSON.stringify(data));
         } catch (error) {

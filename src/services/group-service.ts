@@ -1,17 +1,20 @@
 import type { Group } from '../models/Group';
 import { LocalStorageService } from './local-storage-service';
-import type { ContactService } from './contact-service';
+import { ContactService } from './contact-service';
+import { Injector } from './injector';
 
 export class GroupService {
     private GROUPS_KEY = 'groups';
     private groups: Group[] = [];
+    private localStorageService = Injector.get(LocalStorageService);
+    private contactService = Injector.get(ContactService)
 
     loadGroups(): void {
-        this.groups = LocalStorageService.loadData<Group>(this.GROUPS_KEY);
+        this.groups = this.localStorageService.loadData<Group>(this.GROUPS_KEY);
     }
 
     saveGroups(): void {
-        LocalStorageService.saveData<Group>(this.GROUPS_KEY, this.groups);
+        this.localStorageService.saveData<Group>(this.GROUPS_KEY, this.groups);
     }
 
     getGroups(): Group[] {
@@ -46,12 +49,12 @@ export class GroupService {
         return true;
     }
 
-    deleteGroup(id: string, contactService: ContactService): boolean {
+    deleteGroup(id: string): boolean {
         const initialLength = this.groups.length;
         this.groups = this.groups.filter(group => group.id !== id);
         if (this.groups.length < initialLength) {
             this.saveGroups();
-            contactService.deleteContactsByGroupId(id);
+            this.contactService.deleteContactsByGroupId(id);
             return true;
         }
         return false;

@@ -1,16 +1,18 @@
 import type { Contact } from '../models/Contact';
 import { LocalStorageService } from './local-storage-service';
+import { Injector } from "./injector";
 
 export class ContactService {
     private CONTACTS_KEY = 'contacts';
     private contacts: Contact[] = [];
+    private localStorageService = Injector.get(LocalStorageService);
 
     loadContacts(): void {
-        this.contacts = LocalStorageService.loadData<Contact>(this.CONTACTS_KEY);
+        this.contacts = this.localStorageService.loadData<Contact>(this.CONTACTS_KEY);
     }
 
     saveContacts(): void {
-        LocalStorageService.saveData<Contact>(this.CONTACTS_KEY, this.contacts)
+        this.localStorageService.saveData<Contact>(this.CONTACTS_KEY, this.contacts)
     }
 
     getContacts(): Contact[] {
