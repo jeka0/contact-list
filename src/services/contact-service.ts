@@ -64,6 +64,7 @@ export class ContactService {
     }
 
     deleteContactsByGroupId(groupId: string): void {
+        this.loadContacts();
         const initialLength = this.contacts.length;
         this.contacts = this.contacts.filter(contact => contact.groupId !== groupId);
         if (this.contacts.length < initialLength) {

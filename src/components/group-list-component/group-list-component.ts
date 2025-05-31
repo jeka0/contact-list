@@ -5,6 +5,7 @@ import { GroupService } from '../../services/group-service';
 import { Injector } from '../../services/injector';
 import type { Group } from '../../models/Group';
 import { Events } from '../../enum/events-enum';
+import { ConfirmationDialogComponent } from '../confirmation-dialog-component/confirmation-dialog-component';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -18,6 +19,7 @@ export class GroupListComponent extends HTMLElement {
     private groupListElement: HTMLUListElement | null = null;
     private addGroupButton: HTMLButtonElement | null = null;
     private saveGroupsButton: HTMLButtonElement | null = null;
+    private confirmationDialog: ConfirmationDialogComponent | null = null;
     private newGroupInputs = new Map<string, HTMLInputElement>();
 
     constructor() {
@@ -31,6 +33,11 @@ export class GroupListComponent extends HTMLElement {
         this.groupListElement = this.shadowRootRef.querySelector('.group-list');
         this.addGroupButton = this.shadowRootRef.querySelector('.add-group-button');
         this.saveGroupsButton = this.shadowRootRef.querySelector('.save-groups-button');
+
+        this.confirmationDialog = document.querySelector('confirmation-dialog');
+        if (!this.confirmationDialog) {
+            console.error('Confirmation dialog component not found in the DOM.');
+        }
 
         this.renderGroups();
 
@@ -51,13 +58,14 @@ export class GroupListComponent extends HTMLElement {
         if (groups.length === 0) {
             const li = document.createElement('li');
             li.textContent = 'Нет групп.';
+            li.classList.add("default-message")
             this.groupListElement.appendChild(li);
             return;
         }
 
         groups.forEach(group => 
             this.groupListElement?.appendChild(
-                this.createGroupItem(group.id, this.createSavedInput(group), (e) => this.handleDeleteGroup(e, group.id))
+                this.createGroupItem(group.id, this.createSavedInput(group), (e) => this.handleDeleteGroup(e, group))
             )
         );
     }
@@ -102,11 +110,15 @@ export class GroupListComponent extends HTMLElement {
     private createAddedInput() : HTMLInputElement {
         const groupNameInput = document.createElement('input');
         groupNameInput.classList.add('new-group-name-input');
-        groupNameInput.placeholder = "Ввудите название";
+        groupNameInput.placeholder = "Введите название";
         return groupNameInput;
     }
 
     private handleAddGroup() {
+        const groups = this.groupService.getGroups();
+        if (groups.length === 0 && this.groupListElement) {
+           this.groupListElement.innerHTML = '';
+        }
         const id = Date.now().toString();
         const newInput = this.createAddedInput();
         this.newGroupInputs.set(id, newInput);
@@ -116,6 +128,9 @@ export class GroupListComponent extends HTMLElement {
                 const listItemToRemove = this.groupListElement?.querySelector(`li[data-group-id="${id}"]`);
                 if(listItemToRemove){
                     this.groupListElement?.removeChild(listItemToRemove);
+                }
+                if(this.newGroupInputs.size === 0){
+                    this.renderGroups();
                 }
             })
         )
@@ -140,16 +155,26 @@ export class GroupListComponent extends HTMLElement {
         this.newGroupInputs.clear();
     }
 
-    private handleDeleteGroup(event: Event, groupId: string) {
+    private handleDeleteGroup(event: Event, group: Group) {
         event.stopPropagation();
-        if (confirm('Вы уверены, что хотите удалить эту группу? Все контакты в ней также будут удалены.')) {
-            if (this.groupService.deleteGroup(groupId)) {
-                this.renderGroups();
-                this.dispatchEvent(new CustomEvent(Events.GROUP_DELETED, { bubbles: true, composed: true, detail: { groupId } }));
-            } else {
-                alert('Не удалось удалить группу.');
-            }
+        const groupId = group.id;
+        const title = `Удалить группу?`;
+        const message = 'Удаление группы повлечет за собой удаление контактов, связанных с этой группой.';
+
+        if(!this.confirmationDialog){
+            return
         }
+
+        this.confirmationDialog.show(title, message, 'Да, удалить').then(confirmed => {
+            if (confirmed) {
+                if (this.groupService.deleteGroup(groupId)) {
+                    this.renderGroups();
+                    this.dispatchEvent(new CustomEvent(Events.GROUP_DELETED, { bubbles: true, composed: true, detail: { groupId } }));
+                } else {
+                    alert('Не удалось удалить группу.');
+                }
+            }
+        })
     }
 }
 

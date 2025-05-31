@@ -63,6 +63,11 @@
     cursor: default !important;
 }
 
+.default-message {
+    display: flex;
+    justify-content: center;
+}
+
 .delete-group-button {
     display: flex;
     justify-content: center;
