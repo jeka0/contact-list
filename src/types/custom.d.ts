@@ -7,3 +7,8 @@ declare module '*.html?raw' {
   const raw: string;
   export default raw;
 }
+
+declare module '*.svg' {
+  const content: string;
+  export default content;
+}
