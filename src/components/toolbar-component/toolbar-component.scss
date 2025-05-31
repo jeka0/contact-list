@@ -27,6 +27,14 @@
       border: none;
       border-radius: 4px;
     }
+    
+    .add:hover {
+        background-color: $danger-hover;
+    }
+
+    .add:active {
+        background-color: $danger-active;
+    }
 
     .groups {
       background: $primary;

@@ -1,6 +1,7 @@
 import html from './custom-dropdown-component.html?raw';
 import cssUrl from './custom-dropdown-component.scss?url';
 import type { DropdownOption } from '../../models/DropdownOption';
+import { Events } from '../../enum/events-enum';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -57,7 +58,7 @@ export class CustomDropdownComponent extends HTMLElement {
         if (this._selectedValue !== newValue) {
             this._selectedValue = newValue;
             this.updateSelectedValueDisplay();
-            this.dispatchEvent(new CustomEvent('change', {
+            this.dispatchEvent(new CustomEvent(Events.DROPDOWN_CHANGE, {
                 detail: { value: this._selectedValue },
                 bubbles: true,
                 composed: true

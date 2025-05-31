@@ -4,6 +4,7 @@ import deleteIconSVG from '../../icons/delete-icon.svg';
 import { GroupService } from '../../services/group-service';
 import { Injector } from '../../services/injector';
 import type { Group } from '../../models/Group';
+import { Events } from '../../enum/events-enum';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -127,7 +128,7 @@ export class GroupListComponent extends HTMLElement {
                 if (groupName) {
                     if (this.groupService.addGroup(groupName)) {
                         this.renderGroups();
-                        this.dispatchEvent(new CustomEvent('group-added', { bubbles: true, composed: true, detail: { groupName } }));
+                        this.dispatchEvent(new CustomEvent(Events.GROUP_ADDED, { bubbles: true, composed: true, detail: { groupName } }));
                     } else {
                         alert('Группа с таким названием уже существует!');
                     }
@@ -144,7 +145,7 @@ export class GroupListComponent extends HTMLElement {
         if (confirm('Вы уверены, что хотите удалить эту группу? Все контакты в ней также будут удалены.')) {
             if (this.groupService.deleteGroup(groupId)) {
                 this.renderGroups();
-                this.dispatchEvent(new CustomEvent('group-deleted', { bubbles: true, composed: true, detail: { groupId } }));
+                this.dispatchEvent(new CustomEvent(Events.GROUP_DELETED, { bubbles: true, composed: true, detail: { groupId } }));
             } else {
                 alert('Не удалось удалить группу.');
             }
