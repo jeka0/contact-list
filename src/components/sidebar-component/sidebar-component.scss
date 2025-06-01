@@ -1,3 +1,5 @@
+@use '../../styles/variables.scss' as *;
+
 :host {
     display: block;
     position: absolute;
@@ -77,4 +79,16 @@
     flex-grow: 1;
     padding: 1rem;
     overflow-y: auto;
+}
+
+@media (max-width: $max-mobile-width) {
+    .sidebar {
+        left: auto;
+        right: 0;
+        transform: translateX(100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
 }

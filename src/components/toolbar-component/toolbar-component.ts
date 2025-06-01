@@ -12,6 +12,7 @@ export class ToolbarComponent extends HTMLElement {
     private shadowRootRef: ShadowRoot;
     private groupsButton: HTMLButtonElement | null = null;
     private addContactButton: HTMLButtonElement | null = null;
+    private addContactMobileButton: HTMLButtonElement | null = null;
 
     constructor() {
         super();
@@ -22,13 +23,16 @@ export class ToolbarComponent extends HTMLElement {
     connectedCallback() {
         this.groupsButton = this.shadowRootRef.querySelector('.groups');
         this.addContactButton = this.shadowRootRef.querySelector('.add');
+        this.addContactMobileButton = this.shadowRootRef.querySelector('.add-mobile');
         this.addClickHandler(this.groupsButton, this.handleGroupsClick);
         this.addClickHandler(this.addContactButton, this.handleAddContactClick);
+        this.addClickHandler(this.addContactMobileButton, this.handleAddContactClick);
     }
 
     disconnectedCallback() {
         this.removeClickHandler(this.groupsButton, this.handleGroupsClick);
         this.removeClickHandler(this.addContactButton, this.handleAddContactClick);
+        this.removeClickHandler(this.addContactMobileButton, this.handleAddContactClick);
     }
 
     private handleGroupsClick() : void {

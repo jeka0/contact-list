@@ -3,7 +3,7 @@
 .contact-group-list {
     display: flex;
     flex-direction: column;
-    padding: 0 10px;
+    padding: 0;
     min-height: 80vh;
     width: 60vw;
     overflow-y: auto;
@@ -96,6 +96,6 @@
 
 @media (max-width: $max-mobile-width) {
     .contact-group-list {
-        width: 90vw;
+        width: 84vw;
     }
 }

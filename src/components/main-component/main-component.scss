@@ -16,7 +16,8 @@
   }
 
   @media (max-width: $max-mobile-width) {
-    padding: 1rem;
+    height: 81vh;
+    padding: 0.5rem;
 
     .empty {
       font-size: 1rem;
