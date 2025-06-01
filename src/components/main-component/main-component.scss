@@ -1,0 +1,26 @@
+@use '../../styles/variables.scss' as *;
+
+.main {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background: $background;
+  height: 84vh;
+  overflow-y: auto;
+
+  .empty {
+    text-align: center;
+    color: $text-muted;
+    margin-top: 3rem;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: $max-mobile-width) {
+    height: 81vh;
+    padding: 0.5rem;
+
+    .empty {
+      font-size: 1rem;
+    }
+  }
+}

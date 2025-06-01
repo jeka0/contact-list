@@ -1,0 +1,91 @@
+@use '../../styles/variables.scss' as *;
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.toolbar-area {
+  width: 60vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: bold;
+  color: $primary;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.add, .add-mobile {
+  background: $danger;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+}
+
+.add:hover, .add-mobile:hover {
+  background-color: $danger-hover;
+}
+
+.add:active, .add-mobile:active {
+  background-color: $danger-active;
+}
+
+.mobile-button-area {
+  display: flex;
+  justify-content: center;
+  background-color: #f8f9fc;
+}
+
+.add-mobile {
+  display: none;
+  width: 84vw;
+  text-align: center;
+  padding: 12px 0;
+  margin-top: 6px;
+}
+
+.groups {
+  background: $primary;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: none;
+  border-radius: 4px;
+}
+
+.groups:hover {
+    background-color: $primary-hover;
+}
+
+.groups:active {
+    background-color: $primary-active;
+}
+
+@media (max-width: $max-mobile-width) {
+  .add {
+    display: none;
+  }
+
+  .add-mobile {
+    display: block;
+  }
+
+  .toolbar-area {
+    width: 84vw;
+  }
+}

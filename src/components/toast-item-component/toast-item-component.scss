@@ -1,0 +1,61 @@
+@use '../../styles/variables.scss' as *;
+
+.toast-item-container {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 12px 20px;
+    margin-bottom: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+    max-width: 350px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.toast-item-container.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.toast-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    background-size: 18px 18px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.toast-message {
+    font-size: 0.95rem;
+    color: #333;
+    word-wrap: break-word;
+}
+
+.toast-item-container.success {
+    border: 1px solid #c8e6c9;
+}
+
+.toast-item-container.success .toast-icon {
+    background-color: #4CAF50;
+    background-image: url('../../icons/icon-success.svg');
+}
+
+.toast-item-container.error {
+    border: 1px solid #ffcdd2;
+}
+
+.toast-item-container.error .toast-icon {
+    background-color: #F44336;
+    background-image: url('../../icons/icon-error.svg');
+}
