@@ -2,6 +2,7 @@ import type { Contact } from '../models/Contact';
 import { LocalStorageService } from './local-storage-service';
 import { ToastService } from './toast-service';
 import { Injector } from "./injector";
+import { Events } from '../enum/events-enum';
 
 export class ContactService {
     private CONTACTS_KEY = 'contacts';
@@ -14,7 +15,7 @@ export class ContactService {
     }
 
     saveContacts(): void {
-        this.localStorageService.saveData<Contact>(this.CONTACTS_KEY, this.contacts)
+        this.localStorageService.saveData<Contact>(this.CONTACTS_KEY, this.contacts);
     }
 
     getContacts(): Contact[] {
@@ -24,7 +25,7 @@ export class ContactService {
     addContact(name: string, phone: string, groupId: string): boolean {
         const unmaskedPhone = phone.replace(/\D/g, '');
         if (this.contacts.some(contact => contact.phone.replace(/\D/g, '') === unmaskedPhone)) {
-            this.toastService.showErrorToast("Данный номер телефон уже используется! Контакт не будет сохранен!")
+            this.toastService.showErrorToast("Данный номер телефон уже используется! Контакт не будет сохранен!");
             return false;
         }
 
@@ -36,7 +37,8 @@ export class ContactService {
         };
         this.contacts.push(newContact);
         this.saveContacts();
-        this.toastService.showSuccessToast("Контакт успешно создан!")
+        this.toastService.showSuccessToast("Контакт успешно создан!");
+        document.dispatchEvent(new CustomEvent(Events.CONTACT_ADDED, { bubbles: true, composed: true }));
         return true;
     }
 
@@ -49,13 +51,14 @@ export class ContactService {
 
         const unmaskedNewPhone = newPhone.replace(/\D/g, '');
         if (this.contacts.some(contact => contact.phone.replace(/\D/g, '') === unmaskedNewPhone && contact.id !== id)) {
-            this.toastService.showErrorToast("Данный номер телефон уже используется! Контакт не будет изменен!")
+            this.toastService.showErrorToast("Данный номер телефон уже используется! Контакт не будет изменен!");
             return false;
         }
 
         this.contacts[index] = { ...this.contacts[index], name: newName, phone: newPhone, groupId: newGroupId };
         this.saveContacts();
-        this.toastService.showSuccessToast("Контакт успешно изменен!")
+        this.toastService.showSuccessToast("Контакт успешно изменен!");
+        document.dispatchEvent(new CustomEvent(Events.CONTACT_EDITED, { bubbles: true, composed: true }));
         return true;
     }
 
@@ -64,7 +67,8 @@ export class ContactService {
         this.contacts = this.contacts.filter(contact => contact.id !== id);
         if (this.contacts.length < initialLength) {
             this.saveContacts();
-            this.toastService.showSuccessToast("Контакт успешно удален!")
+            this.toastService.showSuccessToast("Контакт успешно удален!");
+            document.dispatchEvent(new CustomEvent(Events.CONTACT_DELETED, { bubbles: true, composed: true }));
             return true;
         }
         return false;
@@ -76,7 +80,8 @@ export class ContactService {
         this.contacts = this.contacts.filter(contact => contact.groupId !== groupId);
         if (this.contacts.length < initialLength) {
             this.saveContacts();
-            this.toastService.showSuccessToast("Связанные с группой контакты успешно удалены!")
+            this.toastService.showSuccessToast("Связанные с группой контакты успешно удалены!");
+            document.dispatchEvent(new CustomEvent(Events.CONTACT_DELETED, { bubbles: true, composed: true }));
         }
     }
 }

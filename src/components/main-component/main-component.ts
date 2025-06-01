@@ -1,3 +1,4 @@
+import '../contact-group-list-component/contact-group-list-component';
 import html from './main-component.html?raw';
 import cssUrl from './main-component.scss?url';
 import { SidebarComponent } from '../sidebar-component/sidebar-component';
@@ -22,7 +23,7 @@ export class MainComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        this.sidebarComponent = this.shadowRootRef.querySelector('sidebar-component');
+        this.sidebarComponent = document.querySelector('sidebar-component');
 
         document.addEventListener(Events.SHOW_GROUPS_SIDEBAR, this.handleShowGroupsSidebar.bind(this));
         document.addEventListener(Events.SHOW_CONTACT_FORM, this.handleShowAddContactForm.bind(this));

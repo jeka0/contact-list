@@ -5,7 +5,7 @@ import { GroupService } from '../../services/group-service';
 import { ToastService } from '../../services/toast-service';
 import { Injector } from '../../services/injector';
 import type { Contact } from '../../models/Contact';
-import IMask from 'imask';
+import IMask, { InputMask } from 'imask';
 import { CustomDropdownComponent } from '../custom-dropdown-component/custom-dropdown-component';
 import type { DropdownOption } from '../../models/DropdownOption';
 import { Events } from '../../enum/events-enum';
@@ -31,6 +31,7 @@ export class ContactFormComponent extends HTMLElement {
     private phoneError: HTMLDivElement | null = null;
     private dropdownError: HTMLDivElement | null = null;
 
+    private phoneMaskInstance: InputMask | null = null;
     private _contact: Contact | null = null;
     private _mode: 'add' | 'edit' = 'add';
 
@@ -53,7 +54,7 @@ export class ContactFormComponent extends HTMLElement {
         this.dropdownError = this.shadowRootRef.querySelector('#dropdown-error');
 
         if (this.phoneInput) {
-            IMask(this.phoneInput, {
+            this.phoneMaskInstance = IMask(this.phoneInput, {
                 mask: '+{7} (000) 000-00-00'
             });
         }
@@ -64,6 +65,7 @@ export class ContactFormComponent extends HTMLElement {
             if (this._contact) {
                 this.nameInput!.value = this._contact.name;
                 this.phoneInput!.value = this._contact.phone;
+                this.phoneMaskInstance?.updateValue();
                 if (this.groupDropdown) {
                     this.groupDropdown.value = this._contact.groupId || '';
                 }
@@ -193,14 +195,8 @@ export class ContactFormComponent extends HTMLElement {
         let success = false;
         if (this._mode === 'add') {
             success = this.contactService.addContact(name, phone, groupId);
-            if (success) {
-                this.dispatchEvent(new CustomEvent(Events.CONTACT_ADDED, { bubbles: true, composed: true }));
-            }
         } else if (this._mode === 'edit' && this._contact) {
             success = this.contactService.editContact(this._contact.id, name, phone, groupId);
-            if (success) {
-                this.dispatchEvent(new CustomEvent(Events.CONTACT_EDITED, { bubbles: true, composed: true }));
-            }
         }
 
         if (success) {

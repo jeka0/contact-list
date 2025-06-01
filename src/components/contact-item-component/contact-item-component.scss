@@ -1,0 +1,96 @@
+@use '../../styles/variables.scss' as *;
+
+.contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: #fff;
+    margin-top: 0;
+    margin-bottom: 8px;
+    transition: box-shadow 0.2s ease;
+    border-top: 1px solid rgba(56, 56, 56, 0.144);
+}
+
+.contact-item__details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+@media (max-width: $max-mobile-width) {
+    .contact-item__details {
+     flex-direction: column;
+    }
+  }
+
+.contact-item__name {
+    color: #333;
+    font-size: 1.3rem;
+}
+
+.contact-item__phone {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.contact-item__actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.contact-item__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 46px;
+    height: 46px;
+    border: none;
+    border-radius: 8px;
+    background-color: #f0f0f000;
+    border: 1px solid #66666631;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    padding: 0;
+    margin-left: 10px;
+
+    svg {
+        fill: rgb(136, 136, 136);
+    }
+
+    &:hover {
+        background-color: #f0f0f0;
+        border-color: #bbb;
+    }
+
+    &::before {
+        font-family: 'Material Icons';
+        font-size: 20px;
+        color: #666;
+    }
+}
+
+.contact-item__button--edit:hover {
+    background-color: rgb(219, 219, 219);
+}
+
+.contact-item__button--edit:active {
+    background-color: rgb(185, 185, 185);
+}
+
+.contact-item__button--delete:hover {
+    background-color: #ff4141;
+    svg {
+        fill: white;
+    }
+}
+
+.contact-item__button--delete:active {
+    background-color: #be3232;
+    svg {
+        fill: white;
+    }
+}

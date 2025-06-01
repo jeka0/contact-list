@@ -5,7 +5,6 @@ import { GroupService } from '../../services/group-service';
 import { ToastService } from '../../services/toast-service';
 import { Injector } from '../../services/injector';
 import type { Group } from '../../models/Group';
-import { Events } from '../../enum/events-enum';
 import { ConfirmationDialogComponent } from '../confirmation-dialog-component/confirmation-dialog-component';
 
 const template = document.createElement('template');
@@ -155,7 +154,6 @@ export class GroupListComponent extends HTMLElement {
                     isSuccess = this.groupService.addGroup(groupName)
                     if (isSuccess) {
                         this.newGroupInputs.delete(key)
-                        this.dispatchEvent(new CustomEvent(Events.GROUP_ADDED, { bubbles: true, composed: true, detail: { groupName } }));
                     }
                 } else {
                     this.toastService.showErrorToast('Название группы не может быть пустым!')
@@ -181,7 +179,6 @@ export class GroupListComponent extends HTMLElement {
             if (confirmed) {
                 if (this.groupService.deleteGroup(groupId)) {
                     this.renderGroups();
-                    this.dispatchEvent(new CustomEvent(Events.GROUP_DELETED, { bubbles: true, composed: true, detail: { groupId } }));
                 } else {
                     this.toastService.showErrorToast('Не удалось удалить группу!')
                 }

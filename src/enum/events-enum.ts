@@ -9,4 +9,8 @@ export class Events {
     static readonly CONTACT_EDITED = 'contact-edited';
     static readonly CONTACT_ADDED = 'contact-added';
     static readonly TOASY_HIDDEN = 'toast-hidden';
+    static readonly CONTACT_DELETED = 'contact-deleted';
+    static readonly GROUP_EDITED = 'group-edited';
+    static readonly EDIT_CONTACT = 'edit-contact';
+    static readonly DELETE_CONTACT = 'delete-contact';
 };

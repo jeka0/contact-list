@@ -1,9 +1,12 @@
 @use '../../styles/variables.scss' as *;
 
 .main {
+  display: flex;
+  justify-content: center;
   padding: 2rem;
   background: $background;
-  min-height: 80vh;
+  height: 84vh;
+  overflow-y: auto;
 
   .empty {
     text-align: center;
