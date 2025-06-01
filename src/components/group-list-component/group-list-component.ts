@@ -151,8 +151,8 @@ export class GroupListComponent extends HTMLElement {
             if (newGroupInput) {
                 const groupName = newGroupInput.value.trim();
                 if (groupName) {
-                    isSuccess = this.groupService.addGroup(groupName)
-                    if (isSuccess) {
+                    if (this.groupService.addGroup(groupName)) {
+                        isSuccess = true;
                         this.newGroupInputs.delete(key)
                     }
                 } else {
